@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router()
+const verifyToken = require('../middleware/authMiddleware')
 
 const {
     createPost,
@@ -10,15 +11,15 @@ const {
     updatePost
 } = require('../controller/post.controller')
 
-router.get('/', getAllPosts)
-router.get('/:userId/posts', getUserPosts)
+router.get('/', verifyToken, getAllPosts)
+router.get('/:userId/posts', verifyToken, getUserPosts)
 
-router.post('/', createPost)
+router.post('/', verifyToken, createPost)
 
-router.patch('/:id/like', likePost)
-router.patch('/:id/update', updatePost)
+router.patch('/:postId/like', verifyToken, likePost)
+router.patch('/:postId', verifyToken, updatePost)
 
-router.delete('/:id/delete', deletePost)
+router.delete('/:postId', verifyToken, deletePost)
 
 
 
