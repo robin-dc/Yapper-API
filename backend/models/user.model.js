@@ -27,13 +27,17 @@ const UserSchema = mongoose.Schema({
         type: String,
         default: "",
     },
+    bio: {
+        type: String,
+        max: 50
+    },
     friends: {
         type: Array,
         default: []
     },
-    bio: {
-        type: String,
-        max: 50
+    friendRequests: {
+        type: Array,
+        default: []
     },
     profileViews: {
         type: Number,
