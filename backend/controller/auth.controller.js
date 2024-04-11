@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const register = asyncHandler(async (req,res) => {
     try {
@@ -20,7 +21,7 @@ const register = asyncHandler(async (req,res) => {
             throw new Error('Insufficient credentials')
         }
 
-        const isEmailExist = await User.find({email: email})
+        const isEmailExist = await User.findOne({email: email})
 
         if(isEmailExist){
             res.status(400)
@@ -70,8 +71,8 @@ const login = asyncHandler(async (req,res) => {
             throw new Error('Insufficient credentials')
         }
 
-        const user = await User.find({email})
-
+        const user = await User.findOne({email})
+        console.log(user)
         if(!user) {
             res.status(404)
             throw new Error('User not found')
@@ -85,9 +86,9 @@ const login = asyncHandler(async (req,res) => {
         }
 
         res.status(200).json({
-            firstName: [user.firstName],
-            lastName: [user.lastName],
-            email: [user.email],
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
             token: generateToken(user.id)
         })
     } catch (error) {

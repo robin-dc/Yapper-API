@@ -120,12 +120,22 @@ const deletePost = asyncHandler(async (req,res) => {
 const updatePost = asyncHandler(async (req,res) => {
     try {
         const { postId } = req.params
-        const post = await findById(postId)
+        const post = await Post.findById(postId)
         const { description, postImagePath } = req.body
-        if(!description){
-            description = post.description
+
+        if(post.userId !== req.user._id.toString()){
+            res.status(400)
+            throw new Error("Access to edit denied")
         }
-        const newPost = await Post.findByIdAndUpdate(postId, { $set: { description: description, postImagePath: postImagePath }})
+
+        // if(!description){
+        //     description = post.description
+        // }
+        // if(!postImagePath){
+        //     postImagePath = post.postImagePath
+        // }
+
+        const newPost = await Post.findByIdAndUpdate(postId, { $set: { description: description, postImagePath: postImagePath }}, {new: true})
 
         res.status(200).json(newPost)
     } catch (error) {

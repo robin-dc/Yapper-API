@@ -18,16 +18,18 @@ const authRouter = require('./routes/authRoute')
 const postRouter = require('./routes/postRoute')
 const userRouter = require('./routes/userRoute')
 
-app.get('/api/auth', authRouter)
+app.get('/', (req, res) => res.status(200).json("Okay"))
+
+app.use('/api/auth', authRouter)
 
 // you cant access this if youre not authenticated
-app.get('/api/posts', postRouter)
-app.get('/api/users', userRouter)
+app.use('/api/posts', postRouter)
+app.use('/api/users', userRouter)
 
 // ERROR MIDDLEWARE
 app.use(errorHandler)
 
-const port = process.env.PORT
+const port = process.env.PORT || 3001
 
 connect().then(() => {
     app.listen(port, () => console.log("Server listening on port: ", port))

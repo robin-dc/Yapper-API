@@ -8,8 +8,8 @@ const {
     getMe
 } = require('../controller/auth.controller')
 
-router.get('/', login)
-router.get('/register', register)
+router.post('/', login)
+router.post('/register', register)
 router.get('/me', verifyToken, getMe)
 
 module.exports = router

@@ -6,9 +6,8 @@ const {
     getUserProfile,
     getFriends,
     getFriendRequests,
-    addFriendRequest,
+    addRemoveFriendRequest,
     confirmRequest,
-    cancelRequest,
     unfriend,
 } = require('../controller/user.controller')
 
@@ -16,9 +15,7 @@ const {
 router.get('/:userId', verifyToken, getUserProfile)
 router.get('/:userId/requests', verifyToken, getFriendRequests)
 router.get('/:userId/friends', verifyToken, getFriends)
-
-router.patch('/:userId/add/:friendId', verifyToken, addFriendRequest)
-router.patch('/:userId/cancel/:friendId', verifyToken, cancelRequest)
+router.patch('/:userId/add-cancel/:friendId', verifyToken, addRemoveFriendRequest)
 router.patch('/:userId/unfriend/:friendId', verifyToken, unfriend)
 router.patch('/:userId/confirm/:friendId', verifyToken, confirmRequest)
 
