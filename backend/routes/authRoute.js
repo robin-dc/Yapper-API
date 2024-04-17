@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router()
 const verifyToken = require('../middleware/authMiddleware')
+const upload = require('../middleware/multerMiddleware')
 
 const {
     login,
@@ -9,7 +10,7 @@ const {
 } = require('../controller/auth.controller')
 
 router.post('/', login)
-router.post('/register', register)
+router.post('/register', upload.single("avatar"), register)
 router.get('/me', verifyToken, getMe)
 
 module.exports = router

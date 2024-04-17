@@ -2,21 +2,28 @@ const asyncHandler = require('express-async-handler')
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const cloudinary = require('../utils/cloudinary')
+
 
 const register = asyncHandler(async (req,res) => {
     try {
+
         const {
             firstName,
             lastName,
             email,
             password,
-            avatar,
             bio,
             location,
             links
         } = req.body
 
-        if(!firstName || !lastName || !email || !password || !avatar || !location) {
+        if(!req.file){
+            res.status(500)
+            throw new Error("Avatar required")
+        }
+
+        if(!firstName || !lastName || !email || !password || !location) {
             res.status(400)
             throw new Error('Insufficient credentials')
         }
@@ -28,6 +35,21 @@ const register = asyncHandler(async (req,res) => {
             throw new Error('Email already in used')
         }
 
+        let image = null
+        await cloudinary.uploader.upload(req.file.path, {folder: "Yapper/Avatars"},  (err, result) => {
+            if(err){
+                console.log(err)
+                res.status(500)
+                throw new Error("File upload failed")
+            }
+
+            image = {
+                url: result?.secure_url,
+                cloudinary_id: result?.public_id,
+            };
+            console.log("Uploaded image")
+        })
+
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
@@ -36,7 +58,7 @@ const register = asyncHandler(async (req,res) => {
             lastName,
             email,
             password: hashedPassword,
-            avatar,
+            avatar: image,
             bio,
             friends: [],
             profileViews: 0,
@@ -50,7 +72,7 @@ const register = asyncHandler(async (req,res) => {
             firstName,
             lastName,
             email,
-            avatar,
+            avatar: image,
             bio,
             location,
             links

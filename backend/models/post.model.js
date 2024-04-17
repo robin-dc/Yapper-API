@@ -22,8 +22,8 @@ const PostSchema = mongoose.Schema({
         required: true
     },
     postImagePath: {
-        type: String,
-        default: ""
+        type: Array,
+        default: []
     },
     likes: {
         type: Map,

@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler')
 const Post = require('../models/post.model')
-
+const cloudinary = require('../utils/cloudinary')
 // @desc Create a new post
 // @route POST /api/posts
 // @access private
@@ -11,8 +11,7 @@ const createPost = asyncHandler(async (req,res) => {
             firstName,
             lastName,
             userAvatar,
-            description,
-            postImagePath
+            description
         } = req.body
 
 
@@ -21,13 +20,39 @@ const createPost = asyncHandler(async (req,res) => {
             throw new Error('Insufficient credentials')
         }
 
+        const imageUrlList = [];
+        console.log(req.files)
+        for (var i = 0; i < req.files.length; i++) {
+            const locaFilePath = req.files[i].path;
+
+            // Upload the local image to Cloudinary
+            // and get image url as response
+            const result = await cloudinary.uploader.upload(locaFilePath,
+                {folder: "Yapper/Posts"},
+                (err, result) => {
+                    if(err){
+                        console.log(err)
+                        res.status(500)
+                        throw new Error("File upload failed")
+                    }
+            })
+
+            imageUrlList.push({
+                    url: result?.secure_url,
+                    cloudinary_id: result?.public_id
+            });
+
+            console.log("Uploaded image: ", locaFilePath)
+        }
+
+
         const newPost = new Post({
             userId,
             firstName,
             lastName,
             userAvatar,
             description,
-            postImagePath,
+            postImagePath: imageUrlList,
             likes: {},
             comments: []
         })

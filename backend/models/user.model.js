@@ -24,8 +24,8 @@ const UserSchema = mongoose.Schema({
         min: 5
     },
     avatar: {
-        type: String,
-        default: "",
+        type: Object,
+        default: {},
     },
     bio: {
         type: String,
